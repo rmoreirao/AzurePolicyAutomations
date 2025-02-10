@@ -1,0 +1,89 @@
+# Networking
+# Private Endpoints (microsoft.network/privateendpoints)
+# Virtual Networks (microsoft.network/virtualnetworks)
+# Network Security Groups (NSG) (microsoft.network/networksecuritygroups)
+# Public IP Addresses (microsoft.network/publicipaddresses)
+# Network Interfaces (microsoft.network/networkinterfaces)
+# Route Tables (microsoft.network/routetables)
+# Network Watchers (microsoft.network/networkwatchers)
+# Application Gateways (microsoft.network/applicationgateways)
+# Bastion Hosts (microsoft.network/bastionhosts)
+# Compute
+# Virtual Machines (VMs) (microsoft.compute/virtualmachines)
+# Managed Disks (microsoft.compute/disks)
+# Snapshots (microsoft.compute/snapshots)
+# Virtual Machine Extensions (microsoft.compute/virtualmachines/extensions)
+# Storage & Databases
+# Storage Accounts (microsoft.storage/storageaccounts)
+# Cosmos DB Accounts (microsoft.documentdb/databaseaccounts)
+# Security & Identity
+# Key Vaults (microsoft.keyvault/vaults)
+# User-Assigned Managed Identities (microsoft.managedidentity/userassignedidentities)
+# Monitoring & Insights
+# Metric Alerts (microsoft.insights/metricalerts)
+# Activity Log Alerts (microsoft.insights/activitylogalerts)
+# Action Groups (microsoft.insights/actiongroups)
+# Workbooks (microsoft.insights/workbooks)
+# Autoscale Settings (microsoft.insights/autoscalesettings)
+# Azure Dashboards (microsoft.portal/dashboards)
+# Log Analytics Workspaces (microsoft.operationalinsights/workspaces)
+# Smart Detector Alert Rules (microsoft.alertsmanagement/smartdetectoralertrules)
+# Application Insights (microsoft.insights/components)
+# Security Automations (microsoft.security/automations)
+# App Services & API Management
+# App Service Plans (microsoft.web/serverfarms)
+# App Services (Web Apps) (microsoft.web/sites)
+# API Management Services (microsoft.apimanagement/service)
+# Event & Messaging Services
+# Event Grid System Topics (microsoft.eventgrid/systemtopics)
+# Event Hub Namespaces (microsoft.eventhub/namespaces)
+# Other Services
+# Load Tests (microsoft.loadtestservice/loadtests)
+# DevTest Lab Schedules (microsoft.devtestlab/schedules)
+
+resources
+| extend ResourceType = case(type == "microsoft.network/privateendpoints", "Private Endpoints", 
+                       type == "microsoft.network/virtualnetworks", "Virtual Networks", 
+                       type == "microsoft.network/networksecuritygroups", "Network Security Groups (NSG)", 
+                       type == "microsoft.network/publicipaddresses", "Public IP Addresses", 
+                       type == "microsoft.network/networkinterfaces", "Network Interfaces", 
+                       type == "microsoft.network/routetables", "Route Tables", 
+                       type == "microsoft.network/networkwatchers", "Network Watchers", 
+                       type == "microsoft.network/applicationgateways", "Application Gateways", 
+                       type == "microsoft.network/bastionhosts", "Bastion Hosts", 
+                       type == "microsoft.compute/virtualmachines", "Virtual Machines (VMs)", 
+                       type == "microsoft.compute/disks", "Managed Disks", 
+                       type == "microsoft.compute/snapshots", "Snapshots", 
+                       type == "microsoft.compute/virtualmachines/extensions", "Virtual Machine Extensions", 
+                       type == "microsoft.storage/storageaccounts", "Storage Accounts", 
+                       type == "microsoft.documentdb/databaseaccounts", "Cosmos DB Accounts", 
+                       type == "microsoft.keyvault/vaults", "Key Vaults", 
+                       type == "microsoft.managedidentity/userassignedidentities", "User-Assigned Managed Identities", 
+                       type == "microsoft.insights/metricalerts", "Metric Alerts", 
+                       type == "microsoft.insights/activitylogalerts", "Activity Log Alerts", 
+                       type == "microsoft.insights/actiongroups", "Action Groups", 
+                       type == "microsoft.insights/workbooks", "Workbooks", 
+                       type == "microsoft.insights/autoscalesettings", "Autoscale Settings", 
+                       type == "microsoft.portal/dashboards", "Azure Dashboards", 
+                       type == "microsoft.operationalinsights/workspaces", "Log Analytics Workspaces", 
+                       type == "microsoft.alertsmanagement/smartdetectoralertrules", "Smart Detector Alert Rules", 
+                       type == "microsoft.insights/components", "Application Insights", 
+                       type == "microsoft.security/automations", "Security Automations", 
+                       type == "microsoft.web/serverfarms", "App Service Plans", 
+                       type == "microsoft.web/sites", "App Services (Web Apps)", 
+                       type == "microsoft.apimanagement/service", "API Management Services", 
+                       type == "microsoft.eventgrid/systemtopics", "Event Grid System Topics", 
+                       type == "microsoft.eventhub/namespaces", "Event Hub Namespaces", 
+                       type == "microsoft.loadtestservice/loadtests", "Load Tests", 
+                       type == "microsoft.devtestlab/schedules", "DevTest Lab Schedules", 
+                       type)
+| extend Environment = case(
+                        resourceGroup contains("-prd-"),"Production",
+                        resourceGroup contains("-dev-"),"Development",
+                        resourceGroup contains("-tst-"),"Test",
+                        resourceGroup contains("-acc-"),"Acceptance",
+                        resourceGroup contains("-sdb-"),"Sandbox",
+                        resourceGroup contains("-sdbm-"),"Sandbox M",
+                        "Unknown"
+                    )
+| where subscriptionId in ('2d172aeb-b927-43ec-9808-8c9585119364','bb8d53bd-65e7-4ef3-8bc3-5ed1f5b39734','0b168dbc-e507-4e96-8492-662d8c5e6648')

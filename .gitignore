@@ -1,6 +1,3 @@
 
 # Ignore the output folder
 output/
-
-# Ignore analysis/.ipynb_checkpoints
-analysis/.ipynb_checkpoints/

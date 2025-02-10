@@ -12,7 +12,7 @@ function ResourceGraphQueryAndExportToCsv {
 
     while ($true) {
         if ($skipResult -gt 0) {
-            Write-Host "Processing next batch of $batchSize records"
+            Write-Host "Processing next batch of $batchSize records. Current total: $($kqlResult.Count)"
             $graphResult = Search-AzGraph -Query $kqlQuery -First $batchSize -SkipToken $graphResult.SkipToken -UseTenantScope
         } else {
             Write-Host "Processing first batch of $batchSize records"
@@ -48,11 +48,12 @@ function ResourceGraphQueryAndExportToCsv {
 
 # Array of .kql filenames
 $kqlFiles = @(
-    "kustoQueries/policyAssignments.kql"
-    "kustoQueries/initiativePolicies.kql"
-    "kustoQueries/policyAssignmentCompliancyState.kql",
-    "kustoQueries/policyDefinitions.kql",
-    "kustoQueries/managementGroups.kql"
+    # "kustoQueries/policyAssignments.kql"
+    # "kustoQueries/initiativePolicies.kql"
+    # "kustoQueries/policyAssignmentCompliancyState.kql",
+    # "kustoQueries/policyDefinitions.kql",
+    # "kustoQueries/managementGroups.kql", 
+    "kustoQueries/advisorRecommendations.kql"
 )
 
 # Iterate over each .kql file and execute the export method

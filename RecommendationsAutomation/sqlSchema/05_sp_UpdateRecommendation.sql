@@ -1,0 +1,58 @@
+
+CREATE OR ALTER PROCEDURE [dbo].[sp_UpdateRecommendation]
+    @Id BIGINT,
+    @ExternalId NVARCHAR(255),
+    @Source NVARCHAR(10),
+    @TenantId NVARCHAR(255),
+    @SubscriptionId NVARCHAR(255),
+    @Category NVARCHAR(50),
+    @ShortDescription NVARCHAR(500),
+    @Description NVARCHAR(MAX),
+    @PortentialBenefits NVARCHAR(1000),
+    @Impact NVARCHAR(10),
+    @Status NVARCHAR(20),
+    @StatusAction NVARCHAR(50) = NULL,
+    @StatusHistoryJson NVARCHAR(MAX) = NULL,
+    @UpdatedBy NVARCHAR(255),
+    @ImplementationExternalLink NVARCHAR(2000) = NULL,
+    @DocumentationLink NVARCHAR(2000) = NULL,
+    @ResourceType NVARCHAR(255) = NULL,
+    @ResourceName NVARCHAR(255) = NULL,
+    @ResourceId NVARCHAR(1000) = NULL,
+    @Region NVARCHAR(100) = NULL,
+    @CostPotentialSavingsAmount DECIMAL(18,2) = NULL,
+    @CostPotentialSavingsCcy NVARCHAR(3) = NULL,
+    @CostPotentialSavingsLookbackPeriodDays INT = NULL,
+    @CostPotentialSavingsTerm NVARCHAR(10) = NULL,
+    @DetailsJson NVARCHAR(MAX) = NULL
+AS
+BEGIN
+    UPDATE [dbo].[tb_recommendation]
+    SET ExternalId = @ExternalId,
+        Source = @Source,
+        TenantId = @TenantId,
+        SubscriptionId = @SubscriptionId,
+        Category = @Category,
+        ShortDescription = @ShortDescription,
+        Description = @Description,
+        PortentialBenefits = @PortentialBenefits,
+        Impact = @Impact,
+        Status = @Status,
+        StatusAction = @StatusAction,
+        StatusHistoryJson = @StatusHistoryJson,
+        UpdatedBy = @UpdatedBy,
+        LastUpdateDatetime = GETUTCDATE(),
+        ImplementationExternalLink = @ImplementationExternalLink,
+        DocumentationLink = @DocumentationLink,
+        ResourceType = @ResourceType,
+        ResourceName = @ResourceName,
+        ResourceId = @ResourceId,
+        Region = @Region,
+        CostPotentialSavingsAmount = @CostPotentialSavingsAmount,
+        CostPotentialSavingsCcy = @CostPotentialSavingsCcy,
+        CostPotentialSavingsLookbackPeriodDays = @CostPotentialSavingsLookbackPeriodDays,
+        CostPotentialSavingsTerm = @CostPotentialSavingsTerm,
+        DetailsJson = @DetailsJson
+    WHERE Id = @Id
+END
+GO
