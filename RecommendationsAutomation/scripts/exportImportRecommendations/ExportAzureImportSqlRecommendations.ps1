@@ -74,7 +74,7 @@ function Import-RecommendationToSql {
 
         # if category == 'highavailability' then set category = 'reliability'
         if ($category.ToLower() -eq 'highavailability') {
-            $category = 'reliability'
+            $category = 'Reliability'
         }
 
         # Build implementation link
@@ -102,7 +102,7 @@ function Import-RecommendationToSql {
                 @Category = '$category',
                 @ShortDescription = '$shortDesc',
                 @Description = '$shortDesc',
-                @PortentialBenefits = 'TODO - PortentialBenefits',
+                @PotentialBenefits = 'TODO - PotentialBenefits',
                 @Impact = '$($recommendation.impact)',
                 @Status = 'NEW',
                 @CreatedBy = 'System',

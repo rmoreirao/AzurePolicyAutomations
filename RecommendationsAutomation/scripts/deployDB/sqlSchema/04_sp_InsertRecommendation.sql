@@ -8,7 +8,7 @@ CREATE OR ALTER PROCEDURE [dbo].[sp_InsertRecommendation]
     @Category NVARCHAR(50),
     @ShortDescription NVARCHAR(500),
     @Description NVARCHAR(MAX),
-    @PortentialBenefits NVARCHAR(1000),
+    @PotentialBenefits NVARCHAR(1000),
     @Impact NVARCHAR(10),
     @Status NVARCHAR(20),
     @StatusAction NVARCHAR(50) = NULL,
@@ -33,14 +33,14 @@ BEGIN
 
     INSERT INTO [dbo].[tb_recommendation]
     (ExternalId, Source, CloudProvider, TenantId, SubscriptionId, SubscriptionName, Category, ShortDescription, 
-     Description, PortentialBenefits, Impact, Status, StatusAction, StatusHistoryJson, 
+     Description, PotentialBenefits, Impact, Status, StatusAction, StatusHistoryJson, 
      CreatedBy, ImplementationExternalLink, DocumentationLink, 
      ResourceType, ResourceName, ResourceId, Region, CostPotentialSavingsAmount, 
      CostPotentialSavingsCcy, CostPotentialSavingsLookbackPeriodDays, CostPotentialSavingsTerm, 
      DetailsJson, ProposedETA)
     VALUES
     (@ExternalId, @Source, @CloudProvider, @TenantId, @SubscriptionId, @SubscriptionName, @Category, @ShortDescription,
-     @Description, @PortentialBenefits, @Impact, @Status, @StatusAction, @StatusHistoryJson,
+     @Description, @PotentialBenefits, @Impact, @Status, @StatusAction, @StatusHistoryJson,
      @CreatedBy, @ImplementationExternalLink, @DocumentationLink,
      @ResourceType, @ResourceName, @ResourceId, @Region, @CostPotentialSavingsAmount,
      @CostPotentialSavingsCcy, @CostPotentialSavingsLookbackPeriodDays, @CostPotentialSavingsTerm,

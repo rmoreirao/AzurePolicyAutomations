@@ -12,7 +12,7 @@ CREATE TABLE [dbo].[tb_recommendation]
     [Category] NVARCHAR(50) NOT NULL CHECK ([Category] IN ('Cost', 'Security', 'Reliability', 'Operational Excellence', 'Performance')),
     [ShortDescription] NVARCHAR(500) NOT NULL,
     [Description] NVARCHAR(MAX),
-    [PortentialBenefits] NVARCHAR(1000),
+    [PotentialBenefits] NVARCHAR(1000),
     [Impact] NVARCHAR(10) NOT NULL CHECK ([Impact] IN ('High', 'Medium', 'Low')),
     [Status] NVARCHAR(20) NOT NULL CHECK ([Status] IN ('New', 'Dismissed', 'InProgress', 'Implemented')),
     [StatusAction] NVARCHAR(50) CHECK ([StatusAction] IN ('SYNC_WITH_SOURCE')),

@@ -8,7 +8,7 @@ CREATE OR ALTER PROCEDURE [dbo].[sp_GetRecommendations]
 AS
 BEGIN
     SELECT Id, ExternalId, Source,CloudProvider, TenantId, SubscriptionId,SubscriptionName, Category, ShortDescription, 
-           Description, PortentialBenefits, Impact, Status, StatusAction, StatusHistoryJson, 
+           Description, PotentialBenefits, Impact, Status, StatusAction, StatusHistoryJson, 
            CreatedBy, CreationDatetime, UpdatedBy, LastUpdateDatetime, ArchivedBy, ArchiveDatetime, 
            ImplementationExternalLink, DocumentationLink, ResourceType, ResourceName, ResourceId, 
            Region, CostPotentialSavingsAmount, CostPotentialSavingsCcy, 

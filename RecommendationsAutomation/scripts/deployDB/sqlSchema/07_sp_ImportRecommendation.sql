@@ -8,7 +8,7 @@ CREATE OR ALTER PROCEDURE [dbo].[sp_ImportRecommendation]
     @Category NVARCHAR(50),
     @ShortDescription NVARCHAR(500),
     @Description NVARCHAR(MAX),
-    @PortentialBenefits NVARCHAR(1000),
+    @PotentialBenefits NVARCHAR(1000),
     @Impact NVARCHAR(10),
     @Status NVARCHAR(20),
     @CreatedBy NVARCHAR(255),
@@ -73,19 +73,25 @@ BEGIN
     IF @ExistingId IS NULL
     BEGIN
         
-        -- @ProposedETA = if Impact == 'High'
+        -- Calculate @ProposedETA: if Impact == 'High' then @ProposedETA = GETUTCDATE() + 90 days, else @ProposedETA = NULL
+        DECLARE @ProposedETA DATETIME2 = 
+            CASE 
+                WHEN @Impact = 'High' THEN DATEADD(DAY, 90, GETUTCDATE())
+                ELSE NULL
+            END
+
 
         -- Insert new recommendation
         INSERT INTO [dbo].[tb_recommendation]
         (ExternalId, Source, CloudProvider, TenantId, SubscriptionId, SubscriptionName, Category, ShortDescription, 
-         Description, PortentialBenefits, Impact, Status, StatusAction, StatusHistoryJson, 
+         Description, PotentialBenefits, Impact, Status, StatusAction, StatusHistoryJson, 
          CreatedBy, CreationDatetime, LastUpdateDatetime,
          ImplementationExternalLink, DocumentationLink, ResourceType, ResourceName, 
          ResourceId, Region, CostPotentialSavingsAmount, CostPotentialSavingsCcy, 
          CostPotentialSavingsLookbackPeriodDays, CostPotentialSavingsTerm, DetailsJson, ProposedETA)
         VALUES
         (@ExternalId, @Source, @CloudProvider, @TenantId, @SubscriptionId, @SubscriptionName, @Category, @ShortDescription,
-         @Description, @PortentialBenefits, @Impact, @Status, NULL, @NewStatusEntry,
+         @Description, @PotentialBenefits, @Impact, @Status, NULL, @NewStatusEntry,
          @CreatedBy, @StateUpdateDatetime, @StateUpdateDatetime,
          @ImplementationExternalLink, @DocumentationLink, @ResourceType, @ResourceName,
          @ResourceId, @Region, @CostPotentialSavingsAmount, @CostPotentialSavingsCcy,
@@ -104,7 +110,7 @@ BEGIN
             Category = @Category,
             ShortDescription = @ShortDescription,
             Description = @Description,
-            PortentialBenefits = @PortentialBenefits,
+            PotentialBenefits = @PotentialBenefits,
             Impact = @Impact,
             Status = @Status,
             StatusAction = NULL,
@@ -121,7 +127,6 @@ BEGIN
             CostPotentialSavingsLookbackPeriodDays = @CostPotentialSavingsLookbackPeriodDays,
             CostPotentialSavingsTerm = @CostPotentialSavingsTerm,
             DetailsJson = @DetailsJson,
-            ProposedETA = @ProposedETA,
             ArchivedBy = NULL,
             ArchiveDatetime = NULL
         WHERE Id = @ExistingId
