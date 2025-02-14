@@ -59,7 +59,7 @@ BEGIN
             ELSE @NewStatusEntry
         END
 
-    -- Update the recommendation status, history, and StatusAction in a single update
+    -- Update the recommendation status, history, StatusAction in a single update
     UPDATE [dbo].[tb_recommendation]
     SET Status = @Status,
         UpdatedBy = @User,

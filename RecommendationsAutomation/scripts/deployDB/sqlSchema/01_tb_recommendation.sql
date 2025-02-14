@@ -1,10 +1,14 @@
+DROP TABLE [dbo].[tb_recommendation]
+GO
 CREATE TABLE [dbo].[tb_recommendation]
 (
     [Id] BIGINT IDENTITY(1,1) PRIMARY KEY,
     [ExternalId] NVARCHAR(255),
     [Source] NVARCHAR(10) NOT NULL CHECK ([Source] IN ('Custom', 'Azure', 'AWS')),
+    [CloudProvider] NVARCHAR(100),
     [TenantId] NVARCHAR(255),
     [SubscriptionId] NVARCHAR(255),
+    [SubscriptionName] NVARCHAR(255),
     [Category] NVARCHAR(50) NOT NULL CHECK ([Category] IN ('Cost', 'Security', 'Reliability', 'Operational Excellence', 'Performance')),
     [ShortDescription] NVARCHAR(500) NOT NULL,
     [Description] NVARCHAR(MAX),
@@ -29,10 +33,22 @@ CREATE TABLE [dbo].[tb_recommendation]
     [CostPotentialSavingsCcy] NVARCHAR(3),
     [CostPotentialSavingsLookbackPeriodDays] INT,
     [CostPotentialSavingsTerm] NVARCHAR(10),
-    [DetailsJson] NVARCHAR(MAX)
+    [DetailsJson] NVARCHAR(MAX),
+    [ProposedETA] DATETIME2
 );
 
 -- Create indexes for commonly queried columns
-CREATE INDEX IX_recommendation_TenantId ON [dbo].[tb_recommendation] ([TenantId]);
-CREATE INDEX IX_recommendation_SubscriptionId ON [dbo].[tb_recommendation] ([SubscriptionId]);
-CREATE INDEX IX_recommendation_Status ON [dbo].[tb_recommendation] ([Status]);
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_recommendation_TenantId' AND object_id = OBJECT_ID('dbo.tb_recommendation'))
+BEGIN
+    CREATE INDEX IX_recommendation_TenantId ON [dbo].[tb_recommendation] ([TenantId]);
+END
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_recommendation_SubscriptionId' AND object_id = OBJECT_ID('dbo.tb_recommendation'))
+BEGIN
+    CREATE INDEX IX_recommendation_SubscriptionId ON [dbo].[tb_recommendation] ([SubscriptionId]);
+END
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_recommendation_Status' AND object_id = OBJECT_ID('dbo.tb_recommendation'))
+BEGIN
+    CREATE INDEX IX_recommendation_Status ON [dbo].[tb_recommendation] ([Status]);
+END

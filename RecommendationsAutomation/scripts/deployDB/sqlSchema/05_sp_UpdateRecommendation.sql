@@ -1,10 +1,11 @@
-
 CREATE OR ALTER PROCEDURE [dbo].[sp_UpdateRecommendation]
     @Id BIGINT,
     @ExternalId NVARCHAR(255),
     @Source NVARCHAR(10),
+    @CloudProvider NVARCHAR(100),
     @TenantId NVARCHAR(255),
     @SubscriptionId NVARCHAR(255),
+    @SubscriptionName NVARCHAR(255),
     @Category NVARCHAR(50),
     @ShortDescription NVARCHAR(500),
     @Description NVARCHAR(MAX),
@@ -24,14 +25,17 @@ CREATE OR ALTER PROCEDURE [dbo].[sp_UpdateRecommendation]
     @CostPotentialSavingsCcy NVARCHAR(3) = NULL,
     @CostPotentialSavingsLookbackPeriodDays INT = NULL,
     @CostPotentialSavingsTerm NVARCHAR(10) = NULL,
-    @DetailsJson NVARCHAR(MAX) = NULL
+    @DetailsJson NVARCHAR(MAX) = NULL,
+    @ProposedETA DATETIME2 = NULL
 AS
 BEGIN
     UPDATE [dbo].[tb_recommendation]
     SET ExternalId = @ExternalId,
+        CloudProvider = @CloudProvider,
         Source = @Source,
         TenantId = @TenantId,
         SubscriptionId = @SubscriptionId,
+        SubscriptionName = @SubscriptionName,
         Category = @Category,
         ShortDescription = @ShortDescription,
         Description = @Description,
@@ -52,7 +56,8 @@ BEGIN
         CostPotentialSavingsCcy = @CostPotentialSavingsCcy,
         CostPotentialSavingsLookbackPeriodDays = @CostPotentialSavingsLookbackPeriodDays,
         CostPotentialSavingsTerm = @CostPotentialSavingsTerm,
-        DetailsJson = @DetailsJson
+        DetailsJson = @DetailsJson,
+        ProposedETA = @ProposedETA
     WHERE Id = @Id
 END
 GO

@@ -1,8 +1,10 @@
 CREATE OR ALTER PROCEDURE [dbo].[sp_InsertRecommendation]
     @ExternalId NVARCHAR(255),
     @Source NVARCHAR(10),
+    @CloudProvider NVARCHAR(100),
     @TenantId NVARCHAR(255),
     @SubscriptionId NVARCHAR(255),
+    @SubscriptionName NVARCHAR(255),
     @Category NVARCHAR(50),
     @ShortDescription NVARCHAR(500),
     @Description NVARCHAR(MAX),
@@ -22,23 +24,27 @@ CREATE OR ALTER PROCEDURE [dbo].[sp_InsertRecommendation]
     @CostPotentialSavingsCcy NVARCHAR(3) = NULL,
     @CostPotentialSavingsLookbackPeriodDays INT = NULL,
     @CostPotentialSavingsTerm NVARCHAR(10) = NULL,
-    @DetailsJson NVARCHAR(MAX) = NULL
+    @DetailsJson NVARCHAR(MAX) = NULL,
+    @ProposedETA DATETIME2 = NULL
 AS
 BEGIN
+    
+
+
     INSERT INTO [dbo].[tb_recommendation]
-    (ExternalId, Source, TenantId, SubscriptionId, Category, ShortDescription, 
+    (ExternalId, Source, CloudProvider, TenantId, SubscriptionId, SubscriptionName, Category, ShortDescription, 
      Description, PortentialBenefits, Impact, Status, StatusAction, StatusHistoryJson, 
      CreatedBy, ImplementationExternalLink, DocumentationLink, 
      ResourceType, ResourceName, ResourceId, Region, CostPotentialSavingsAmount, 
      CostPotentialSavingsCcy, CostPotentialSavingsLookbackPeriodDays, CostPotentialSavingsTerm, 
-     DetailsJson)
+     DetailsJson, ProposedETA)
     VALUES
-    (@ExternalId, @Source, @TenantId, @SubscriptionId, @Category, @ShortDescription,
+    (@ExternalId, @Source, @CloudProvider, @TenantId, @SubscriptionId, @SubscriptionName, @Category, @ShortDescription,
      @Description, @PortentialBenefits, @Impact, @Status, @StatusAction, @StatusHistoryJson,
      @CreatedBy, @ImplementationExternalLink, @DocumentationLink,
      @ResourceType, @ResourceName, @ResourceId, @Region, @CostPotentialSavingsAmount,
      @CostPotentialSavingsCcy, @CostPotentialSavingsLookbackPeriodDays, @CostPotentialSavingsTerm,
-     @DetailsJson)
+     @DetailsJson, @ProposedETA)
 
     SELECT SCOPE_IDENTITY() as NewId
 END

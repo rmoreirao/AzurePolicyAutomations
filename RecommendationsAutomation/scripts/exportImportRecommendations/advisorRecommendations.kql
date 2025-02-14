@@ -1,0 +1,32 @@
+AdvisorResources
+| where type =~ 'microsoft.advisor/recommendations'
+| extend 
+    category = tostring(properties.category), 
+    impact = tostring(properties.impact), 
+    problem = tostring(properties.shortDescription.problem),
+    annualSavingsAmount = tostring(properties.extendedProperties.annualSavingsAmount), 
+    savingsCurrency = tostring(properties.extendedProperties.savingsCurrency),
+    lookbackPeriod = tostring(properties.extendedProperties.lookbackPeriod), 
+    savingsTerm = tostring(properties.extendedProperties.term),
+    lastUpdated = tostring(properties.lastUpdated),
+    region = tostring(properties.extendedProperties.region),
+    ResourceId = tolower(tostring(properties.resourceMetadata.resourceId)) 
+| where (category == 'Cost' and ((coalesce(lookbackPeriod,'7') == '7' and coalesce(savingsTerm,'P1Y') == 'P1Y')) ) or (category != 'Cost')
+| join kind=leftouter (
+    resourcecontainers
+    | where type == 'microsoft.resources/subscriptions'
+    | project subscriptionId, subscriptionName = name
+) on subscriptionId
+| project-away subscriptionId1 
+| join kind=leftouter (
+    resources
+    | project ResourceId = tolower(id), ResourceName = name
+) on ResourceId
+| project-away ResourceId1 
+// | where subscriptionId in ('2d172aeb-b927-43ec-9808-8c9585119364','bb8d53bd-65e7-4ef3-8bc3-5ed1f5b39734','0b168dbc-e507-4e96-8492-662d8c5e6648')
+// | where category == 'Security'
+// | summarize count() by impact,category, problem
+// | summarize count() by category
+| order by category asc
+// | summarize count()
+| order by ['subscriptionName'] asc

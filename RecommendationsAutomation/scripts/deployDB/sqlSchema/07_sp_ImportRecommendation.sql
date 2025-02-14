@@ -1,8 +1,10 @@
 CREATE OR ALTER PROCEDURE [dbo].[sp_ImportRecommendation]
     @ExternalId NVARCHAR(255),
     @Source NVARCHAR(10),
+    @CloudProvider NVARCHAR(100),
     @TenantId NVARCHAR(255),
     @SubscriptionId NVARCHAR(255),
+    @SubscriptionName NVARCHAR(255),
     @Category NVARCHAR(50),
     @ShortDescription NVARCHAR(500),
     @Description NVARCHAR(MAX),
@@ -70,21 +72,24 @@ BEGIN
 
     IF @ExistingId IS NULL
     BEGIN
+        
+        -- @ProposedETA = if Impact == 'High'
+
         -- Insert new recommendation
         INSERT INTO [dbo].[tb_recommendation]
-        (ExternalId, Source, TenantId, SubscriptionId, Category, ShortDescription, 
+        (ExternalId, Source, CloudProvider, TenantId, SubscriptionId, SubscriptionName, Category, ShortDescription, 
          Description, PortentialBenefits, Impact, Status, StatusAction, StatusHistoryJson, 
          CreatedBy, CreationDatetime, LastUpdateDatetime,
          ImplementationExternalLink, DocumentationLink, ResourceType, ResourceName, 
          ResourceId, Region, CostPotentialSavingsAmount, CostPotentialSavingsCcy, 
-         CostPotentialSavingsLookbackPeriodDays, CostPotentialSavingsTerm, DetailsJson)
+         CostPotentialSavingsLookbackPeriodDays, CostPotentialSavingsTerm, DetailsJson, ProposedETA)
         VALUES
-        (@ExternalId, @Source, @TenantId, @SubscriptionId, @Category, @ShortDescription,
+        (@ExternalId, @Source, @CloudProvider, @TenantId, @SubscriptionId, @SubscriptionName, @Category, @ShortDescription,
          @Description, @PortentialBenefits, @Impact, @Status, NULL, @NewStatusEntry,
          @CreatedBy, @StateUpdateDatetime, @StateUpdateDatetime,
          @ImplementationExternalLink, @DocumentationLink, @ResourceType, @ResourceName,
          @ResourceId, @Region, @CostPotentialSavingsAmount, @CostPotentialSavingsCcy,
-         @CostPotentialSavingsLookbackPeriodDays, @CostPotentialSavingsTerm, @DetailsJson)
+         @CostPotentialSavingsLookbackPeriodDays, @CostPotentialSavingsTerm, @DetailsJson, @ProposedETA)
 
         SELECT SCOPE_IDENTITY() as NewId
     END
@@ -92,8 +97,10 @@ BEGIN
     BEGIN
         -- Update existing recommendation
         UPDATE [dbo].[tb_recommendation]
-        SET TenantId = @TenantId,
+        SET CloudProvider = @CloudProvider,
+            TenantId = @TenantId,
             SubscriptionId = @SubscriptionId,
+            SubscriptionName = @SubscriptionName,
             Category = @Category,
             ShortDescription = @ShortDescription,
             Description = @Description,
@@ -114,6 +121,7 @@ BEGIN
             CostPotentialSavingsLookbackPeriodDays = @CostPotentialSavingsLookbackPeriodDays,
             CostPotentialSavingsTerm = @CostPotentialSavingsTerm,
             DetailsJson = @DetailsJson,
+            ProposedETA = @ProposedETA,
             ArchivedBy = NULL,
             ArchiveDatetime = NULL
         WHERE Id = @ExistingId

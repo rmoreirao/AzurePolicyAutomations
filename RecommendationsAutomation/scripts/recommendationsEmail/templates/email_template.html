@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }}
+        table {{
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }}
+        th, td {{
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }}
+        th {{
+            background-color: #00754a; /* Heineken green */
+            color: white;
+        }}
+        td {{
+            background-color: #fff;
+        }}
+        .summary {{
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #e2f0d9; /* Light green */
+            border-left: 5px solid #00754a; /* Heineken green */
+        }}
+        h2 {{
+            text-align: center;
+            color: #00754a; /* Heineken green */
+        }}
+        .summary p {{
+            margin: 5px 0;
+        }}
+        .high-impact {{
+            
+        }}
+        .medium-impact {{
+            
+        }}
+        .low-impact {{
+            
+        }}
+    </style>
+</head>
+<body>
+    <h2>Heineken Cloud Recommendations - {cloud_provider} - {subscription_name}</h2>
+    
+    <h3>Summary - Total Recommendations per Category</h3>
+
+    <table>
+        <tr>
+            <th>Category</th>
+            <th class="high-impact">High Impact</th>
+            <th class="medium-impact">Medium Impact</th>
+            <th class="low-impact">Low Impact</th>
+            <th>Total</th>
+        </tr>
+        {table_rows}
+    </table>
+
+    <h3>Cost Recommendations</h3>
+
+    <div class="summary">
+        <p>Total Potential Cost Savings: {potential_cost_savings} {potential_cost_savings_ccy}</p> 
+    </div>
+
+    <table>
+        <tr>
+            <th>Impact</th>
+            <th>Description</th>
+            <th>Potential Savings</th>
+            <th>Resource Name</th>
+            <th>ETA</th>
+            <th>Last Updated</th>
+            <th>View</th>
+        </tr>
+        {recommendations_rows}
+    </table>
+
+</body>
+</html>

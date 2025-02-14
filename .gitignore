@@ -1,3 +1,4 @@
 
 # Ignore the output folder
 output/
+*.msi
