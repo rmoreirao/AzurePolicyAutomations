@@ -21,7 +21,7 @@ BEGIN
     -- In this case, the recommendation should be marked for syncing with the source
     IF @Status = 'DISMISSED' AND @CurrentSource = 'Azure' AND @User != 'System'
     BEGIN
-        SET @NewStatusAction = 'SYNC_WITH_SOURCE'
+        SET @NewStatusAction = 'TO_SYNC_WITH_SOURCE'
     END
 
     -- Create new status history entry

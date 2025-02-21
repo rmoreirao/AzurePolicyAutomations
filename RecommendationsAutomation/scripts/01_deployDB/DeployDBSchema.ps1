@@ -33,22 +33,16 @@ try {
 
     # Initialize counters
     $totalExecuted = 0
-    $totalFailed = 0
 
-    # Execute each SQL file
+    # Execute each SQL file 
     foreach ($file in $sqlFiles) {
         $filePath = $file.FullName
-        $success = Execute-SqlFile -filePath $filePath -connectionString $connectionString
-        if ($success) {
-            $totalExecuted++
-        } else {
-            $totalFailed++
-        }
+        Execute-SqlFile -filePath $filePath -connectionString $connectionString
+        $totalExecuted++
     }
 
     Write-Host "Deployment process completed."
     Write-Host "Total Files Executed: $totalExecuted"
-    Write-Host "Total Files Failed: $totalFailed"
 }
 catch {
     Write-Error "Error during execution: $_"

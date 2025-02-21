@@ -63,7 +63,7 @@ function Import-RecommendationToSql {
         $subscriptionName = $recommendation.subscriptionName.Replace("'", "''")
         $category = $recommendation.category.Replace("'", "''")
         $shortDesc = $recommendation.problem.Replace("'", "''")
-        $resourceId = if ($recommendation.resourceId) { $recommendation.resourceId.Replace("'", "''") } else { $null }
+        $resourceId = if ($recommendation.ResourceId) { $recommendation.ResourceId.Replace("'", "''") } else { $null }
         $resourceName = if ($recommendation.ResourceName) { $recommendation.ResourceName.Replace("'", "''") } else { $null }
         $region = if ($recommendation.region) { $recommendation.region.Replace("'", "''") } else { $null }
 
@@ -82,7 +82,7 @@ function Import-RecommendationToSql {
             "cost" { "https://portal.azure.com/#view/Microsoft_Azure_Expert/AdvisorMenuBlade/~/Cost" }
             "security" { "https://portal.azure.com/#view/Microsoft_Azure_Expert/AdvisorMenuBlade/~/Security" }
             "reliability" { "https://portal.azure.com/#view/Microsoft_Azure_Expert/AdvisorMenuBlade/~/Reliability" }
-            "operational excellence" { "https://portal.azure.com/#view/Microsoft_Azure_Expert/AdvisorMenuBlade/~/OperationalExcellence" }
+            "operationalexcellence" { "https://portal.azure.com/#view/Microsoft_Azure_Expert/AdvisorMenuBlade/~/OperationalExcellence" }
             "performance" { "https://portal.azure.com/#view/Microsoft_Azure_Expert/AdvisorMenuBlade/~/Performance" }
             # "highavailability" { "https://portal.azure.com/#view/Microsoft_Azure_Expert/AdvisorMenuBlade/~/HighAvailability" }
             default { 

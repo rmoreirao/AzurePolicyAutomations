@@ -114,6 +114,7 @@ BEGIN
             Impact = @Impact,
             Status = @Status,
             StatusAction = NULL,
+            StatusActionExternalId = NULL,
             StatusHistoryJson = @NewStatusHistoryJson,
             LastUpdateDatetime = @StateUpdateDatetime,
             ImplementationExternalLink = @ImplementationExternalLink,
