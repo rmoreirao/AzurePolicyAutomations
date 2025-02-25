@@ -5,23 +5,34 @@ CREATE OR ALTER PROCEDURE [dbo].[sp_UpdateRecommendationStatus]
     @Status NVARCHAR(20)
 AS
 BEGIN
-    DECLARE @CurrentSource NVARCHAR(10)
-    DECLARE @CurrentStatusHistoryJson NVARCHAR(MAX)
-    DECLARE @NewStatusHistoryJson NVARCHAR(MAX)
-    DECLARE @StateUpdateDatetime DATETIME2 = GETUTCDATE()
-    DECLARE @NewStatusAction NVARCHAR(50) = NULL
+    DECLARE @CurrentSource NVARCHAR(10);
+    DECLARE @CurrentStatusHistoryJson NVARCHAR(MAX);
+    DECLARE @CurrentStatusAction NVARCHAR(50);
+    DECLARE @NewStatusHistoryJson NVARCHAR(MAX);
+    DECLARE @StateUpdateDatetime DATETIME2 = GETUTCDATE();
+    DECLARE @NewStatusAction NVARCHAR(50) = NULL;
 
-    -- Get current Source and StatusHistoryJson
-    SELECT @CurrentSource = Source, @CurrentStatusHistoryJson = StatusHistoryJson
+    -- Get current Source, StatusHistoryJson, and StatusAction
+    SELECT 
+        @CurrentSource = Source, 
+        @CurrentStatusHistoryJson = StatusHistoryJson,
+        @CurrentStatusAction = StatusAction
     FROM [dbo].[tb_recommendation]
-    WHERE Id = @Id
+    WHERE Id = @Id;
+
+    -- If StatusAction is not empty, throw an exception
+    IF ISNULL(@CurrentStatusAction, '') = 'TO_SYNC_WITH_SOURCE'
+    BEGIN
+        RAISERROR('Cannot update status of recommendation because there is a pending action: "%s".', 16, 1, @CurrentStatusAction);
+        RETURN;
+    END
 
     -- Set StatusAction if conditions are met
     -- This scenario is where user is dismissing a recommendation that was synced from Azure
     -- In this case, the recommendation should be marked for syncing with the source
     IF @Status = 'DISMISSED' AND @CurrentSource = 'Azure' AND @User != 'System'
     BEGIN
-        SET @NewStatusAction = 'TO_SYNC_WITH_SOURCE'
+        SET @NewStatusAction = 'TO_SYNC_WITH_SOURCE';
     END
 
     -- Create new status history entry
@@ -31,7 +42,7 @@ BEGIN
             @Status AS State,
             @UserComments AS UserComments
         FOR JSON PATH
-    )
+    );
 
     -- Handle JSON array creation/append
     SET @NewStatusHistoryJson = 
@@ -57,15 +68,15 @@ BEGIN
                 FOR JSON PATH
             )
             ELSE @NewStatusEntry
-        END
+        END;
 
-    -- Update the recommendation status, history, StatusAction in a single update
+    -- Update the recommendation status, history, and StatusAction in a single update
     UPDATE [dbo].[tb_recommendation]
     SET Status = @Status,
         UpdatedBy = @User,
         LastUpdateDatetime = @StateUpdateDatetime,
         StatusHistoryJson = @NewStatusHistoryJson,
         StatusAction = @NewStatusAction
-    WHERE Id = @Id
+    WHERE Id = @Id;
 END
 GO

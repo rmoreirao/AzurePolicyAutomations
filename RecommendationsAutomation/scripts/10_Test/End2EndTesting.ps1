@@ -1,20 +1,20 @@
-# Write-Host "1) Redeploying the database schema..."
-# $scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "../01_deployDB/DeployDBSchema.ps1"
-# & $scriptPath
+Write-Host "1) Redeploying the database schema..."
+$scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "../01_deployDB/DeployDBSchema.ps1"
+& $scriptPath
 
-# Read-Host -Prompt "Press Enter to continue"
+Read-Host -Prompt "Press Enter to continue"
 
-# Write-Host "2) Syncing recommendations from Azure to SQL..."
-# $scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "../02_exportImportRecommendations/ExportAzureImportSqlRecommendations.ps1"
-# & $scriptPath
+Write-Host "2) Syncing recommendations from Azure to SQL..."
+$scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "../02_exportImportRecommendations/ExportAzureImportSqlRecommendations.ps1"
+& $scriptPath
 
-# Read-Host -Prompt "Press Enter to continue"
+Read-Host -Prompt "Press Enter to continue"
 
-# Write-Host "3) Generating Recommendations Digest Emails..."
-# $scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "../03_recommendationsEmail/recommendationsSummaryEmail.py"
-# python $scriptPath
+Write-Host "3) Generating Recommendations Digest Emails..."
+$scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "../03_recommendationsEmail/recommendationsSummaryEmail.py"
+python $scriptPath
 
-# Read-Host -Prompt "Press Enter to continue"
+Read-Host -Prompt "Press Enter to continue"
 
 $recommendationId = Read-Host -Prompt "Enter the ID of the recommendation to be dismissed on SQL (press Enter to skip)"
 if ([string]::IsNullOrWhiteSpace($recommendationId)) {

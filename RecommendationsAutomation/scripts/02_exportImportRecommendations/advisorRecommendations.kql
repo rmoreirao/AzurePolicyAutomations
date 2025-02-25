@@ -12,8 +12,7 @@ AdvisorResources
     savingsTerm = tostring(properties.extendedProperties.term),
     lastUpdated = tostring(properties.lastUpdated),
     region = tostring(properties.extendedProperties.region),
-    ResourceId = tolower(tostring(coalesce(properties.resourceMetadata.resourceId,''))),
-    SubscriptionId = subscriptionId
+    ResourceId = tolower(tostring(coalesce(properties.resourceMetadata.resourceId,'')))
 | where lookbackPeriod == '7' and savingsTerm =='P1Y'
 | join kind=leftouter (
     AdvisorResources
@@ -30,12 +29,12 @@ AdvisorResources
         | extend s_RecommendationId = tolower(substring(tostring(id), 0, indexof(tostring(id), "/suppressions")))
         | project s_RecommendationId
     ) on $left.dis_id == $right.s_RecommendationId
-)   on $left.recommendationTypeId == $right.dis_recommendationTypeId and $left.SubscriptionId == $right.dis_SusbscriptionId  and $left.ResourceId == $right.dis_ResourceId
+)   on $left.recommendationTypeId == $right.dis_recommendationTypeId and $left.subscriptionId == $right.dis_SusbscriptionId  and $left.ResourceId == $right.dis_ResourceId
 | extend status = case (
                         isnull(dis_recommendationTypeId),"NEW",
                         "DISMISSED"
                     )
-| project recommendationTypeId, category,impact,problem, annualSavingsAmount, savingsCurrency,lookbackPeriod,savingsTerm, lastUpdated,region, ResourceId, SubscriptionId,id,status, tenantId
+| project recommendationTypeId, category,impact,problem, annualSavingsAmount, savingsCurrency,lookbackPeriod,savingsTerm, lastUpdated,region, ResourceId, subscriptionId,id,status, tenantId
 | union (
     AdvisorResources
     | where type =~ 'microsoft.advisor/recommendations'
@@ -51,7 +50,6 @@ AdvisorResources
         lastUpdated = tostring(properties.lastUpdated),
         region = tostring(properties.extendedProperties.region),
         ResourceId = tolower(tostring(properties.resourceMetadata.resourceId)) ,
-        SubscriptionId = subscriptionId,
         status = 'NEW'
     | where category != 'Cost'
     | project recommendationTypeId, category,impact,problem, annualSavingsAmount, savingsCurrency,lookbackPeriod,savingsTerm, lastUpdated,region, ResourceId, subscriptionId,id,status, tenantId
@@ -63,12 +61,13 @@ AdvisorResources
 ) on subscriptionId
 | join kind=leftouter (
     resources
-    | project ResourceId = tolower(id), ResourceName = name
+    | project ResourceId = tolower(id), ResourceName = name,ResourceLocation = location
 ) on ResourceId
-| project recommendationTypeId, category,impact,problem, annualSavingsAmount, savingsCurrency,lookbackPeriod,savingsTerm, lastUpdated,region, ResourceId, SubscriptionId,id,status, tenantId,subscriptionName,ResourceName
+| project recommendationTypeId, category,impact,problem, annualSavingsAmount, savingsCurrency,lookbackPeriod,savingsTerm, lastUpdated,region=coalesce(region,ResourceLocation), ResourceId, subscriptionId,id,status, tenantId,subscriptionName,ResourceName
 // | where subscriptionId in ('2d172aeb-b927-43ec-9808-8c9585119364','bb8d53bd-65e7-4ef3-8bc3-5ed1f5b39734','0b168dbc-e507-4e96-8492-662d8c5e6648')
 // | where category == 'Security'
 // | summarize count() by impact,category, problem
 // | summarize count() by category
 // | order by category asc
 // // | summarize count()
+

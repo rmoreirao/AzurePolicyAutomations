@@ -31,28 +31,44 @@ function Dismiss-RecommendationOnAzure {
     )
 
     $token = (Get-AzAccessToken -ResourceUrl 'https://management.azure.com').Token
-    $uri = "https://management.azure.com{$recommendation.ExternalId}/suppressions/{guid}?api-version=2023-01-01"
+
+    if (-not $recommendation.SubscriptionId) {
+        throw "SubscriptionId is missing in recommendation object."
+    }
+
+    # Build full identifiers
+    $recommendationId = $recommendation.ExternalId  # now holds only the recommendation id
+    $suppressName = "HardcodedSuppressName"
+
+    # Construct the URI per the API documentation:
+    # DELETE https://management.azure.com/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{suppressionId}?api-version=2023-01-01
+    $uri = "https://management.azure.com$($recommendationId)/suppressions/$($suppressName)?api-version=2023-01-01"
+
+    # Build the request body
     $body = @{
         properties = @{
-            ttl = "PT1H"
+            suppressionId = "" 
+            ttl = ""
         }
-    } | ConvertTo-Json
+    } | ConvertTo-Json -Depth 4
 
     $response = Invoke-RestMethod -Uri $uri -Method Put -Headers @{ Authorization = "Bearer $token" } -Body $body -ContentType "application/json"
+    ## Retrieve the response -> properties -> suppressionId and return it
+    return $response.properties.suppressionId
 
-    return $response
 }
 
 function Update-RecommendationStatusAction {
     param (
-        [PSObject]$recommendation
+        [string]$recommendationId,
+        [string]$suppressId
     )
 
     $query = @"
         EXEC [dbo].[sp_UpdateRecommendationStatusAction]
-            @Id = $($recommendation.Id),
+            @Id = $($recommendationId),
             @StatusAction = 'SOURCE_UPDATED',
-            @StatusActionExternalId = 'TODO - Azure Suppress ID',
+            @StatusActionExternalId = '$($suppressId)',
             @UpdatedBy = 'System'
 "@
 
@@ -69,10 +85,14 @@ try {
     foreach ($recommendation in $recommendations) {
         try {
             # Dismiss recommendation on Azure
-            Dismiss-RecommendationOnAzure -recommendation $recommendation
+            Write-Host "Syncing recommendation: $($recommendation.Id)"
+
+            $suppressId = Dismiss-RecommendationOnAzure -recommendation $recommendation
+
+            Write-Host "Successfully dismissed recommendation: $($recommendation.Id) on Azure"
 
             # Update recommendation status action in the database
-            Update-RecommendationStatusAction -recommendation $recommendation
+            Update-RecommendationStatusAction -recommendationId $recommendation.Id -suppressId $suppressId
 
             Write-Host "Successfully synced recommendation: $($recommendation.Id)"
         }
